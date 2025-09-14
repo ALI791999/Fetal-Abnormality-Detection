@@ -57,16 +57,79 @@ pip install -r requirements.txt
 
 ### 2. Directory Structure
 
-Fetal-Abnormality-Detection/
-│
-├── src/ # Source code (training, inference, post-processing, etc.)
-├── predictions/ # Predicted masks (created during inference)
-├── sample_inferences/ # Example outputs for quick reference
-├── data/ # (Download) HC18 dataset (excluded from repo)
-├── models/ # (Download) Trained checkpoints (excluded from repo)
-├── requirements.txt
-├── README.md
+Fetal-Abnormality-Detection/ <br>
+|
+├── src/ # Source code (training, inference, post-processing, etc.)<br>
+├── predictions/ # Predicted masks (created during inference)<br>
+├── sample_inferences/ # Example outputs for quick reference<br>
+├── data/ # (Download) HC18 dataset (excluded from repo)<br>
+├── models/ # (Download) Trained checkpoints (excluded from repo)<br>
+├── requirements.txt<br>
+├── README.md<br>
 
 Link for the "data" and "models" directories: https://drive.google.com/drive/folders/1kVK17OFyQlDXQlTyPmFiGER9PfR-DU0u?usp=sharing
+
+
+## Training
+
+To train the model on the HC18 dataset, simply run the training script:
+
+```bash
+python src/train.py
+```
+This will:  
+- Train the Learnable Resizer + DeepLabV3+ pipeline end-to-end  
+- Save model checkpoints in the `models/` directory  
+
+## Inference
+
+To generate predictions using a trained model, run:
+
+```bash
+python src/inference.py
+```
+This will:
+- Load the saved model checkpoint
+- Apply the segmentation model on validation/test data
+- Save binary prediction masks in the predictions/ folder
+
+<p align="center">
+  <img width="1199" height="452" alt="Image" src="https://github.com/user-attachments/assets/57122645-5c91-4a1d-9901-fdd3fda8129f" />
+</p>
+
+---
+
+## Performance (DICE Score)
+
+Segmentation performance on the **HC18 test set** was evaluated using the **DICE coefficient**, a standard metric for overlap between predicted and ground-truth masks.  
+
+You can reproduce the evaluation by running:
+
+```bash
+python src/DICE.py
+```
+
+### === Summary ===
+
+- **N** = 199  
+- **Mean Dice**: 0.9653  
+- **Median Dice**: 0.9708  
+- **Std Dice**: 0.0234  
+- **Min / Max**: 0.8017 / 0.9935  
+- **Global Dice**: 0.9668
+
+## Abnormality Detection
+
+After inference, you can perform abnormality detection by running:
+
+```bash
+python src/abnormality.py
+```
+This will:  
+- Fit ellipses on the predicted masks  
+- Compute head circumference (HC) using **[Ramanujan’s approximation](https://mathworld.wolfram.com/Ellipse.html)** for ellipse perimeter  
+- Estimate gestational age (GA) using the **[INTERGROWTH-21st standards](https://intergrowth21.tghn.org/standards-tools/)**  
+- Classify each case as **microcephaly / normal / macrocephaly** using **standard percentile growth tables** from INTERGROWTH-21st  
+- Save results in an output file (e.g., `.xlsx` or `.csv`) for further analysis  
 
 
