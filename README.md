@@ -58,7 +58,7 @@ pip install -r requirements.txt
 ### 2. Directory Structure
 
 Fetal-Abnormality-Detection/ <br>
-|
+|<br>
 ├── src/ # Source code (training, inference, post-processing, etc.)<br>
 ├── predictions/ # Predicted masks (created during inference)<br>
 ├── sample_inferences/ # Example outputs for quick reference<br>
